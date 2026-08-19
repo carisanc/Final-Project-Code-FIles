@@ -1,0 +1,32 @@
+# Parámetros del generador de raceline (generate_raceline).
+# TODO(tuning): valores iniciales conservadores; ajustar midiendo en el sim.
+
+# --- Geometría del coche y márgenes ---
+car_width: 0.31        # m — ancho del F1TENTH (params del f1tenth_gym)
+safety_margin: 0.32    # m — colchón extra a cada lado además del medio ancho
+                       # Historia: 0.15 (inicial) → 0.25 (5 jul, latencia AMCL
+                       # en tf) → 0.32 (7 jul, revisión). El derrape en el
+                       # límite de agarre (MPC a ss=1.0) abre el auto ~0.4 m en
+                       # las salidas rápidas y el clearance 0.38 (con 0.25) se
+                       # quedaba corto en 3 puntos. Con 0.32: clearance 0.48 m
+                       # (+26%) por solo +0.4 s de vuelta teórica (46.0→46.4,
+                       # <1%). Medido: trade-off claramente favorable.
+                       # Si se cambia, REGENERAR la raceline (colcon build
+                       # después, ver CLAUDE.md).
+
+# --- Física para el perfil de velocidad ---
+a_lat_max: 6.0         # m/s² — aceleración lateral máxima (fricción utilizable)
+a_accel: 4.0           # m/s² — aceleración longitudinal disponible
+a_brake: 4.0           # m/s² — frenada disponible
+v_max: 8.0             # m/s — tope de velocidad
+v_min: 1.5             # m/s — piso de velocidad (evita v≈0 en curvas cerradas)
+
+# --- Discretización y optimización ---
+n_points: 400          # nº de waypoints de la raceline
+smoothing_lambda: 0.1  # peso del término de suavidad sobre α (0 = sin suavizado)
+qp_iterations: 3       # re-linealizaciones del QP (recalcular normales)
+spline_smoothing: 5.0  # 's' de splprep al suavizar el centerline crudo (px)
+
+# --- Raceline de mínimo tiempo (--objective time; ver min_time.py) ---
+min_time_smooth_lambda: 2.0  # peso de Σ(Δα)² (anti-zigzag fino)
+min_time_maxiter: 60         # iteraciones L-BFGS-B (60 ≈ 1-2 min)

@@ -1,0 +1,33 @@
+pure_pursuit_node:
+  ros__parameters:
+    # Raceline a seguir (CSV x,y,heading,kappa,v). Se sobrescribe por launch.
+    csv_path: ""
+
+    # Fuente de la pose:
+    #   tf   -> lookup map->base_frame (salida de AMCL); valida la cadena completa
+    #   odom -> /ego_racecar/odom (ground-truth del sim; para aislar el controlador)
+    pose_source: "tf"
+    map_frame: "map"
+    base_frame: "ego_racecar/base_link"
+    odom_topic: "/ego_racecar/odom"
+
+    # Geometría del vehículo
+    wheelbase: 0.3302        # m (lf+lr del f1tenth_gym)
+    max_steering: 0.4        # rad (límite físico ~0.4189)
+
+    # Lookahead adaptativo: L = clip(lookahead_k * v_target, min, max)
+    # Lookahead corto para no CORTAR las curvas (el goal se queda sobre la línea
+    # a lo largo de la curva en vez de cruzarla). Ver README §tuning.
+    lookahead_k: 0.3         # s (distancia por unidad de velocidad)
+    lookahead_min: 0.6       # m
+    lookahead_max: 1.5       # m
+
+    # Búsqueda LOCAL del punto más cercano: ventana de índices alrededor del
+    # último (evita saltar al ramal de vuelta en horquillas/eses plegadas).
+    nearest_search_back: 10  # índices hacia atrás
+    nearest_search_fwd: 40   # índices hacia adelante
+
+    # Velocidad
+    speed_scale: 1.0         # factor sobre la v de la raceline (bajar para pruebas)
+
+    control_rate: 30.0       # Hz del bucle de control

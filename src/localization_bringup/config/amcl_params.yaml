@@ -1,0 +1,106 @@
+amcl:
+  ros__parameters:
+    # gym_bridge no publica /clock → reloj de pared. Ver README §Honestidad.
+    use_sim_time: false
+
+    # --- Frames (árbol TF idéntico al de SLAM, ver src/slam_bringup) ---
+    # map (AMCL) -> ego_racecar/odom (gym_bridge parcheado) -> base_link -> laser
+    base_frame_id: "ego_racecar/base_link"
+    odom_frame_id: "ego_racecar/odom"
+    global_frame_id: "map"
+    # /scan_amcl = /scan reentregado a ~40 Hz por el nodo scan_throttle.
+    # gym_bridge publica /scan a 250 Hz y satura el message filter de AMCL
+    # (diverge). Ver README §Gotcha del scan a 250 Hz.
+    scan_topic: /scan_amcl
+
+    # AMCL solo usa deltas de odometría, así que el modelo diferencial vale
+    # para el Ackermann del F1TENTH.
+    robot_model_type: "nav2_amcl::DifferentialMotionModel"
+
+    # --- Pose inicial: map ≈ odom porque slam_toolbox ancló el mapa en la
+    #     pose de arranque del coche. Arranca localizado sin interacción de
+    #     RViz. Alternativa manual: "2D Pose Estimate".
+    #     yaw = stheta de sim.yaml (-1.3177 = tangente real de la pista en el
+    #     punto de arranque). Si cambia stheta, actualizar este yaml también.
+    set_initial_pose: true
+    initial_pose:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      yaw: -1.3177
+
+    # --- Nube de partículas ---
+    # Perfil racing: con alphas 0.01 (odom del sim casi exacta) la nube es
+    # compacta; menos partículas liberan CPU para corregir cada 5 cm.
+    min_particles: 300
+    max_particles: 1000
+    pf_err: 0.05
+    pf_z: 0.99
+    resample_interval: 1
+    # Actualiza el filtro cuando el coche se movió al menos esto.
+    # Perfil racing: 0.05 m / 0.05 rad (~cada 5 cm / 3°) — con 0.25 m, a 2-5
+    # m/s la corrección llega decenas de ms tarde y la pose publicada arrastra
+    # el error acumulado del tramo ciego (ronda 1: p95 0.42 m).
+    update_min_d: 0.05
+    update_min_a: 0.05
+
+    # --- Modelo de movimiento (ruido) ---
+    # Perfil "racing sim": la odometría del sim es ground-truth (exacta), así
+    # que el ruido del predict es 100% artificial. Con 0.2 la nube se ensancha
+    # en cada giro y la media (la pose publicada) queda 1-2 m atrás en curva
+    # (medido, ronda 0: horquilla err media 2.24 m). Con 0.01 el predict sigue
+    # a la odom casi exacto y el scan solo corrige el residuo.
+    # OJO en hardware real: odom deriva → volver a subir los alphas.
+    alpha1: 0.01
+    alpha2: 0.01
+    alpha3: 0.01
+    alpha4: 0.01
+    alpha5: 0.01
+
+    # --- Modelo de sensor (likelihood field) ---
+    laser_model_type: "likelihood_field"
+    laser_max_range: 30.0
+    laser_min_range: -1.0
+    laser_likelihood_max_dist: 2.0
+    max_beams: 60
+    z_hit: 0.5
+    z_short: 0.05
+    z_max: 0.05
+    z_rand: 0.5
+    sigma_hit: 0.2
+    lambda_short: 0.1
+    do_beamskip: false
+    beam_skip_distance: 0.5
+    beam_skip_threshold: 0.3
+    beam_skip_error_threshold: 0.9
+
+    # --- Recuperación (kidnapped robot): 0 = desactivado ---
+    # En el sim la pose inicial es conocida y AMCL nunca se secuestra, así que
+    # 0 está bien (y ahorra CPU). TODO-hardware: en el coche real, si la
+    # localización se pierde (derrape fuerte, oclusión), con 0 AMCL NUNCA
+    # re-siembra partículas y no se recupera. Activar entonces
+    # recovery_alpha_slow≈0.001, recovery_alpha_fast≈0.1 (junto con subir los
+    # alphas del modelo de movimiento — misma nota de hardware de arriba).
+    recovery_alpha_slow: 0.0
+    recovery_alpha_fast: 0.0
+
+    # --- TF ---
+    tf_broadcast: true
+    # Perfil racing: 0.3 s (antes 1.0). Es cuánto se "estampa hacia el futuro"
+    # el map→odom publicado; con 1.0 el control aceptaba correcciones de hasta
+    # 1 s de viejas sin quejarse. Con updates cada 5 cm, 0.3 sobra.
+    transform_tolerance: 0.3
+    save_pose_rate: 0.5
+
+map_server:
+  ros__parameters:
+    use_sim_time: false
+    # Mapa GROUND-TRUTH (SaoPaulo_map): el validado con el perfil racing
+    # (error de pose 0.11 m) y el que usan los runbooks de PP/MPC. Antes
+    # apuntaba a slam_saopaulo.yaml (mapa SLAM v1, nunca usado en la práctica).
+    # Alternativa auto-consistente (pipeline SLAM real): slam_saopaulo_v3.yaml.
+    # Sobrescribible por el launch arg 'map_yaml'.
+    yaml_filename: "/home/hectorros/roboracer-f1tenth/maps/SaoPaulo_map.yaml"
+
+# Nota: autostart y node_names del lifecycle_manager se pasan inline en
+# localization_launch.py (nodo 'lifecycle_manager_localization'), no desde aquí.
