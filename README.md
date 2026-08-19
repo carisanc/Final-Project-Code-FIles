@@ -39,11 +39,10 @@ Final-Project-Code-Files/
 │   ├── pure_pursuit/                the controller under study
 │   ├── localization_bringup/        SLAM + AMCL bring-up
 │   └── path_planning/               minimum-curvature raceline generator
-│
-├── tools/                          ← standalone analysis scripts (no ROS2, no colcon build)
-│   ├── pp_run_logger.py            records pose + /drive + lateral error to CSV during a real run
-│   ├── compare_pp_runs.py          plots multiple logged runs against the raceline
-│   └── error_vs_curvature.py       correlates tracking error with local raceline curvature
+│                        
+├── pp_run_logger.py            records pose + /drive + lateral error to CSV during a real run
+├── compare_pp_runs.py          plots multiple logged runs against the raceline
+├── error_vs_curvature.py       correlates tracking error with local raceline curvature
 │
 └── docs/media/                     ← sample output images referenced by this README
 ```
