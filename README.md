@@ -180,7 +180,7 @@ No dependency requires a specific hardware accelerator (GPU); the F1TENTH Gym si
 | `src/localization_bringup/` launch/config | AMCL "racing profile" parameters (motion-model alphas lowered from default 0.2 to 0.01) |
 | `src/path_planning/config/raceline_params.yaml` | minimum-curvature optimization and friction-circle velocity-profile parameters used to generate `saopaulo_gt.csv` |
 
-No configuration file is required to run `moby_sim/` or `f1tenth_sim/` — all parameters (d1, c, wheelbase, look-ahead values, etc.) are set as documented defaults directly in `run_all.py` in each package (see each package's own README for the exact values and how to override them).
+No configuration file is required to run `moby_sim/` or `f1tenth_sim/` — all parameters (d1, c, wheelbase, look-ahead values, etc.) are set as documented defaults directly in `run_all.py` in each package.
 
 ---
 
@@ -221,11 +221,11 @@ Raceline overlaid on the map in RViz:
 
 ### 6.4 Real pure pursuit runs on the São Paulo circuit
 
-Three real runs (`lookahead_k` = 0.2, 0.4, 0.6) logged with `tools/pp_run_logger.py` and compared with `tools/compare_pp_runs.py`:
+Three real runs (`lookahead_k` = 0.2, 0.4, 0.6) logged with `pp_run_logger.py` and compared with `compare_pp_runs.py`:
 
 ![Real PP comparison](docs/media/real_pp_lookahead_comparison.png)
 
-Tracking error correlated with local raceline curvature (`tools/error_vs_curvature.py`) — the empirical counterpart to MOBY's closed-form curvature-feasibility limit:
+Tracking error correlated with local raceline curvature (`error_vs_curvature.py`) — the empirical counterpart to MOBY's closed-form curvature-feasibility limit:
 
 ![Error vs curvature](docs/media/error_vs_curvature.png)
 
@@ -233,7 +233,6 @@ Tracking error correlated with local raceline curvature (`tools/error_vs_curvatu
 
 ![Pipeline diagram](docs/media/diagram_pipeline.png)
 
-*(Full-resolution figures, additional runs, and video captures of the ROS2/gym simulation in action are referenced in Section 9 and Annex C of `Final_Review_Report.docx`.)*
 
 ---
 
@@ -275,7 +274,7 @@ Validated independently of the standalone packages, on the actual simulator and 
 | Path planning | raceline max curvature vs. centerline | 0.325 1/m vs. 0.483 1/m (confirms the minimum-curvature optimization is working) |
 | Pure pursuit (`pure_pursuit_node`) | real look-ahead sweep, mean lateral error | 0.226 m (k=0.2) → 0.238 m (k=0.4) → 0.267 m (k=0.6), monotonically increasing — matches the trend predicted by the synthetic `f1tenth_sim` simulation |
 
-Full numerical results, the additional error-vs-curvature/speed correlation analysis, and the discussion of what these results mean are in Sections 9 and 10 of `Final_Review_Report.docx`.
+Full numerical results, the additional error-vs-curvature/speed correlation analysis, and the discussion of what these results mean are in Sections 9 and 10 of `FinalReport_G3.pdf`.
 
 ---
 
@@ -283,14 +282,12 @@ Full numerical results, the additional error-vs-curvature/speed correlation anal
 
 | Looking for... | Go to |
 |---|---|
-| The full paper critique, methodology, results, and discussion | `Final_Review_Report.docx` (repository root) |
+| The full paper critique, methodology, results, and discussion | `FinalReport_G3.pdf` (repository root) |
 | MOBY simulation theory, equations, and scope/limitations | `moby_sim/README.md` |
 | F1TENTH standalone simulation theory and the Coulter/Evans curvature-formula note | `f1tenth_sim/README.md` |
-| ROS2 pure pursuit controller: theory, full runbook, tuning table, and a running log of every bug found and fixed | `src/pure_pursuit/README.md` and `src/pure_pursuit/CLAUDE.md` |
-| How the São Paulo map, localization, and raceline were built | `src/localization_bringup/`, `src/path_planning/` (see their own READMEs) |
 
 ---
 
 ## Notes on Code Comments
 
-Every module in `moby_sim/` and `f1tenth_sim/` includes a file-level docstring citing the exact equation(s) or formula(s) implemented, plus inline comments on any place the implementation deviates from, simplifies, or extends the source literature (for example, the single-angle reformulation of MOBY's compensation law, and the documented factor-of-two discrepancy between the two pure-pursuit curvature formulas). `src/pure_pursuit/pure_pursuit_node.py` documents its control loop step by step in its header comment, mirrored in `Final_Review_Report.docx`, Figure 8.3. `src/pure_pursuit/CLAUDE.md` additionally keeps a dated, problem→cause→fix log of every non-trivial debugging session on the real ROS2 stack.
+Every module in `moby_sim/` and `f1tenth_sim/` includes a file-level docstring citing the exact equation(s) or formula(s) implemented, plus inline comments on any place the implementation deviates from, simplifies, or extends the source literature (for example, the single-angle reformulation of MOBY's compensation law, and the documented factor-of-two discrepancy between the two pure-pursuit curvature formulas). `src/pure_pursuit/pure_pursuit_node.py` documents its control loop step by step in its header comment, mirrored in `FinalReport_G3.pdf`, Figure 8.3.
