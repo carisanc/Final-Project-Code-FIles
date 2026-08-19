@@ -5,7 +5,7 @@
 Carolina Isabella Sánchez Cevallos · Jhony David Choez Lopez
 Escuela Superior Politécnica del Litoral (ESPOL)
 
-This repository contains all source code, simulation projects, configuration files, and validation evidence produced for the final project. The full written analysis (paper summary, technical critique, methodology, results, and discussion) is in **`Final_Review_Report.pdf`** at the repository root; this README covers only how to set up and run the code.
+This repository contains all source code, simulation projects, configuration files, and validation evidence produced for the final project. The full written analysis (paper summary, technical critique, methodology, results, and discussion) is in **`FinalReport_G3.pdf`** at the repository root; this README covers only how to set up and run the code.
 
 ---
 
@@ -13,7 +13,7 @@ This repository contains all source code, simulation projects, configuration fil
 
 ```
 Final-Project-Code-Files/
-├── Final_Review_Report.pdf        ← full written report (read this first)
+├── FinalReport_G3.pdf        ← full written report (read this first)
 ├── README.md                       ← this file
 │
 ├── moby_sim/                       ← standalone Python package (no ROS2)
