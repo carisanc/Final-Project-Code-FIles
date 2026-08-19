@@ -53,7 +53,7 @@ Final-Project-Code-Files/
 
 There are **two independent code tracks** in this repository. You do **not** need ROS2 to run the standalone simulations.
 
-### 2.1 Standalone simulations (`moby_sim/`, `f1tenth_sim/`, `tools/`)
+### 2.1 Standalone simulations (`moby_sim/`, `f1tenth_sim/`)
 
 | Requirement | Version used | Notes |
 |---|---|---|
@@ -66,7 +66,7 @@ Install everything with:
 ```bash
 pip install numpy matplotlib
 ```
-No GPU, no internet connection, and no ROS2 installation are required for `moby_sim/`, `f1tenth_sim/`, or `tools/`.
+No GPU, no internet connection, and no ROS2 installation are required for `moby_sim/`, `f1tenth_sim/`.
 
 ### 2.2 Real ROS2 pipeline (`src/pure_pursuit/`, `src/localization_bringup/`, `src/path_planning/`)
 
