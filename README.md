@@ -81,7 +81,7 @@ No GPU, no internet connection, and no ROS2 installation are required for `moby_
 | Python packages inside ROS2 env | numpy, scipy | usually already satisfied by ROS2 Humble's Python 3.10 environment |
 | RViz2 | ships with ROS2 desktop | for visualization only, not required for headless runs |
 
-This entire pipeline is a full ROS2 workspace (`src/` above is meant to sit inside a workspace such as `~/roboracer-f1tenth/`, alongside `f1tenth_gym_ros` and other dependencies, not necessarily included in this repository). See each package's own `README.md` for exact build and launch commands; `src/pure_pursuit/README.md` in particular documents the complete runbook from a clean clone.
+This entire pipeline is a full ROS2 workspace (`src/` above is meant to sit inside a workspace such as `~/roboracer-f1tenth/`, alongside `f1tenth_gym_ros` and other dependencies, not necessarily included in this repository).
 
 ---
 
@@ -112,7 +112,7 @@ Both should print `All tests passed.` (see §6, Validation Results, below).
 
 ### 3.2 Real ROS2 pipeline — quick start
 
-Full instructions (build, launch order, tunable parameters, and a complete troubleshooting log) are in `src/pure_pursuit/README.md`. Summary:
+Summary:
 
 ```bash
 cd ~/roboracer-f1tenth        # your ROS2 workspace, with this repo's src/ packages inside it
@@ -130,8 +130,6 @@ ros2 run pure_pursuit pure_pursuit_node --ros-args \
 ```
 
 ### 3.3 Analysis tools — logging and post-processing a real run
-
-`tools/` scripts are standalone (no colcon build) and run alongside the ROS2 stack above:
 
 ```bash
 # Terminal C — log a real run to CSV while the controller (3.2) is driving:
